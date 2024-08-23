@@ -1,0 +1,50 @@
+services:
+  cypress:
+    image: cypress/included:13.5.0
+    volumes:
+      - ./front:/app
+    entrypoint: cypress run --project /app
+    environment:
+      DOCKER_MODE: "true"
+    networks:
+      - cypress
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+
+  backend:
+    image: node:latest
+    working_dir: /app
+    volumes:
+      - ./back:/app
+    command: ["/bin/sh", "-c", "npm install && npm run start"]
+    environment:
+      DOCKER_MODE: "true"
+    networks:
+      - cypress
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9897/health"]
+      interval: 5s
+      timeout: 120s
+      retries: 20
+
+  frontend:
+    image: node:latest
+    working_dir: /app
+    volumes:
+      - ./front:/app
+    command: ["/bin/sh", "-c", "npm install && npm run dev"]
+    environment:
+      VITE_DOCKER_MODE: "true"
+    networks:
+      - cypress
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9898"]
+      interval: 5s
+      timeout: 120s
+      retries: 20
+
+networks:
+  cypress:
