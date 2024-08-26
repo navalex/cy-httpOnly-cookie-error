@@ -1,6 +1,7 @@
 #Personnal
 front/node_modules
 front/cypress/screenshots
+front/cypress/videos
 back/node_modules
 
 # Logs

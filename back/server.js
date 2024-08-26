@@ -3,7 +3,9 @@ import cookie from '@fastify/cookie'
 import cors from '@fastify/cors'
 
 const fastify = Fastify({
-  logger: true
+  logger: {
+    level: 'debug'
+  }
 })
 
 const isDocker = process.env.DOCKER_MODE === 'true'
@@ -17,9 +19,9 @@ fastify.register(cookie)
 
 fastify.get('/login', (request, reply) => {
     reply
-        .setCookie('accessToken', 'mySuperToken', { httpOnly: true })
-        .setCookie('session', `${Math.random()}`, { httpOnly: true })
-        .setCookie('other', `${Math.random()}`, { httpOnly: true })
+        .setCookie('accessToken', 'mySuperToken', { httpOnly: true, secure: true, sameSite: 'None' })
+        .setCookie('session', `${Math.random()}`, { httpOnly: true, secure: true, sameSite: 'None' })
+        .setCookie('other', `${Math.random()}`, { httpOnly: true, secure: true, sameSite: 'None' })
         .header('access-control-allow-credentials', 'true')
         .send({
             statut: "ok"
@@ -42,7 +44,7 @@ fastify.get('/health', { logLevel: 'silent' }, (request, reply) => {
 })
 
 // Run the server!
-fastify.listen({ port: 9897 }, function (err, address) {
+fastify.listen({ host: '0.0.0.0', port: 9897 }, function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
