@@ -25,3 +25,7 @@ describe('template spec', () => {
         cy.get('#cookieCheck code').should('be.visible')
     })
 })
+
+
+
+1
